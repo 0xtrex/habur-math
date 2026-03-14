@@ -8,20 +8,16 @@ const canvasRef = useRef<HTMLCanvasElement>(null)
 
 useEffect(() => {
 
-const canvasElement = canvasRef.current
-if (!canvasElement) return
+const canvas = canvasRef.current
+if (!canvas) return
 
-const ctx = canvasElement.getContext("2d")
-if (!ctx) return
-
-const canvas = canvasElement
+const ctx = canvas.getContext("2d") as CanvasRenderingContext2D
 
 canvas.width = 700
 canvas.height = 300
 
 let ballX = 80
 let ballY = 200
-let frame = 0
 let phase: "bowl" | "hit" | "six" = "bowl"
 
 let animationId: number
@@ -104,8 +100,6 @@ ctx.beginPath()
 ctx.arc(ballX,ballY,5,0,Math.PI*2)
 ctx.fillStyle="red"
 ctx.fill()
-
-frame++
 
 animationId = requestAnimationFrame(draw)
 
