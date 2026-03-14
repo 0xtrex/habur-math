@@ -8,13 +8,10 @@ export default function CricketCanvas() {
 
   useEffect(() => {
 
-    const canvasEl = canvasRef.current
-    if (!canvasEl) return
+    const canvas = canvasRef.current
+    if (!canvas) return
 
-    const ctx = canvasEl.getContext("2d")
-    if (!ctx) return
-
-    const canvas = canvasEl
+    const ctx = canvas.getContext("2d")!   // <-- force non-null
 
     canvas.width = 700
     canvas.height = 300
@@ -50,7 +47,6 @@ export default function CricketCanvas() {
       ctx.strokeStyle="white"
       ctx.lineWidth=2
       ctx.stroke()
-
     }
 
     function draw(){
@@ -73,21 +69,15 @@ export default function CricketCanvas() {
       ctx.lineTo(570,140)
       ctx.stroke()
 
-      // ball logic
-
       if(phase==="bowl"){
         ballX +=4
-        if(ballX>520){
-          phase="hit"
-        }
+        if(ballX>520) phase="hit"
       }
 
       else if(phase==="hit"){
         ballX +=5
         ballY -=4
-        if(ballY<60){
-          phase="six"
-        }
+        if(ballY<60) phase="six"
       }
 
       else if(phase==="six"){
@@ -95,15 +85,12 @@ export default function CricketCanvas() {
         ballY +=2
       }
 
-      // draw ball
-
       ctx.beginPath()
       ctx.arc(ballX,ballY,5,0,Math.PI*2)
       ctx.fillStyle="red"
       ctx.fill()
 
       animationId = requestAnimationFrame(draw)
-
     }
 
     draw()
@@ -113,16 +100,11 @@ export default function CricketCanvas() {
   },[])
 
   return (
-
     <div className="flex justify-center mt-20">
-
       <canvas
         ref={canvasRef}
         className="border border-white/20 rounded-xl"
       />
-
     </div>
-
   )
-
 }
