@@ -1,28 +1,29 @@
 "use client"
 
+import PremiumImage from "@/components/PremiumImage"
+
 const players = [
-{ name:"Dipankar", role:"All Rounder", image:"/players/dipankar.jpg" },
-{ name:"Pritam Chakraborty", role:"All Rounder", image:"/players/pritam-chakraborty.png" },
-{ name:"Sunny", role:"All Rounder", image:"/players/sunny.jpg" },
-{ name:"Chandan", role:"All Rounder", image:"/players/chandan.png" },
-{ name:"Keshab", role:"All Rounder", image:"/players/keshab.jpg" },
-{ name:"Arjun", role:"All Rounder", image:"/players/arjun.jpg" },
-{ name:"Choto", role:"All Rounder", image:"/players/choto.jpg" },
-{ name:"Debraj", role:"All Rounder", image:"/players/debraj.jpg" },
-{ name:"Soumya", role:"All Rounder", image:"/players/soumya.jpg" },
-{ name:"Milan", role:"All Rounder", image:"/players/milan.jpg" },
-{ name:"Pradipta", role:"All Rounder", image:"/players/pradipta.jpg" },
-{ name:"Pritam", role:"All Rounder", image:"/players/pritam.jpg" },
-{ name:"Pritam 2", role:"All Rounder", image:"/players/pritam2.jpg" },
-{ name:"Roni", role:"All Rounder", image:"/players/roni.jpg" },
-{ name:"Rupam", role:"All Rounder", image:"/players/rupam.jpg" },
-{ name:"Saheb", role:"All Rounder", image:"/players/saheb.jpg" },
-{ name:"Sandip", role:"All Rounder", image:"/players/sandip.jpg" },
-{ name:"Sayan", role:"All Rounder", image:"/players/sayan.jpg" },
-{ name:"Shovon", role:"All Rounder", image:"/players/shovon.jpg" },
-{ name:"Vicky", role:"All Rounder", image:"/players/vicky.jpg" },
-{ name:"Arghya", role:"All Rounder", image:"/players/arghya.jpg" },
-{ name:"Kaushik", role:"All Rounder", image:"/players/kaushik.jpg" },
+{ name:"Dipankar", image:"/players/dipankar.jpg" },
+{ name:"Pritam Chakraborty", image:"/players/pritam-chakraborty.png" },
+{ name:"Sunny", image:"/players/sunny.jpg" },
+{ name:"Chandan", image:"/players/chandan.png" },
+{ name:"Keshab", image:"/players/keshab.jpg" },
+{ name:"Arjun", image:"/players/arjun.jpg" },
+{ name:"Choto", image:"/players/choto.jpg" },
+{ name:"Debraj", image:"/players/debraj.jpg" },
+{ name:"Soumya", image:"/players/soumya.jpg" },
+{ name:"Milan", image:"/players/milan.jpg" },
+{ name:"Pradipta", image:"/players/pradipta.jpg" },
+{ name:"Pritam", image:"/players/pritam.jpg" },
+{ name:"Roni", image:"/players/roni.jpg" },
+{ name:"Rupam", image:"/players/rupam.jpg" },
+{ name:"Saheb", image:"/players/saheb.jpg" },
+{ name:"Sandip", image:"/players/sandip.jpg" },
+{ name:"Sayan", image:"/players/sayan.jpg" },
+{ name:"Shovon", image:"/players/shovon.jpg" },
+{ name:"Vicky", image:"/players/vicky.jpg" },
+{ name:"Arghya", image:"/players/arghya.jpg" },
+{ name:"Kaushik", image:"/players/kaushik.jpg" }
 ]
 
 export default function Players(){
@@ -40,15 +41,12 @@ Players
 {players.map((p,i)=>(
 <div
 key={i}
-className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl overflow-hidden hover:scale-105 transition duration-300"
+className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:scale-105 transition duration-500 hover:shadow-xl hover:shadow-purple-500/10"
 >
 
-<img
+<PremiumImage
 src={p.image}
-className="w-full h-60 object-cover"
-onError={(e)=>{
-(e.target as HTMLImageElement).src="/players/default.jpg"
-}}
+className="w-full h-64"
 />
 
 <div className="p-5">
@@ -58,7 +56,7 @@ onError={(e)=>{
 </h2>
 
 <p className="text-sm text-gray-400">
-{p.role}
+All Rounder
 </p>
 
 </div>
