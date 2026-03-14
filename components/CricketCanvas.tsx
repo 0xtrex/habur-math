@@ -8,11 +8,13 @@ const canvasRef = useRef<HTMLCanvasElement>(null)
 
 useEffect(() => {
 
-const canvas = canvasRef.current
-if(!canvas) return
+const canvasElement = canvasRef.current
+if (!canvasElement) return
 
-const ctx = canvas.getContext("2d")!
-if(!ctx) return
+const ctx = canvasElement.getContext("2d")
+if (!ctx) return
+
+const canvas = canvasElement
 
 canvas.width = 700
 canvas.height = 300
@@ -20,7 +22,9 @@ canvas.height = 300
 let ballX = 80
 let ballY = 200
 let frame = 0
-let phase = "bowl"
+let phase: "bowl" | "hit" | "six" = "bowl"
+
+let animationId: number
 
 function drawPlayer(x:number,y:number){
 
@@ -56,7 +60,7 @@ ctx.clearRect(0,0,canvas.width,canvas.height)
 
 // pitch
 ctx.fillStyle="#1e7f3b"
-ctx.fillRect(0,220,700,80)
+ctx.fillRect(0,220,canvas.width,80)
 
 // bowler
 drawPlayer(80,200)
@@ -102,11 +106,14 @@ ctx.fillStyle="red"
 ctx.fill()
 
 frame++
-requestAnimationFrame(draw)
+
+animationId = requestAnimationFrame(draw)
 
 }
 
 draw()
+
+return () => cancelAnimationFrame(animationId)
 
 },[])
 
