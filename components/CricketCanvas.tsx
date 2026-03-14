@@ -51,11 +51,11 @@ export default function CricketCanvas() {
 
     function draw(){
 
-      ctx.clearRect(0,0,canvas.width,canvas.height)
+      ctx.clearRect(0,0,canvas!.width,canvas!.height)
 
       // pitch
       ctx.fillStyle="#1e7f3b"
-      ctx.fillRect(0,220,canvas.width,80)
+      ctx.fillRect(0,220,canvas!.width,80)
 
       // bowler
       drawPlayer(80,200)
