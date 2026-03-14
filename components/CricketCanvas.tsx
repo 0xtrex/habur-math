@@ -4,124 +4,125 @@ import { useEffect, useRef } from "react"
 
 export default function CricketCanvas() {
 
-const canvasRef = useRef<HTMLCanvasElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
-useEffect(() => {
+  useEffect(() => {
 
-const canvas = canvasRef.current
-if (!canvas) return
+    const canvasEl = canvasRef.current
+    if (!canvasEl) return
 
-const ctx = canvas.getContext("2d") as CanvasRenderingContext2D
+    const ctx = canvasEl.getContext("2d")
+    if (!ctx) return
 
-canvas.width = 700
-canvas.height = 300
+    const canvas = canvasEl
 
-let ballX = 80
-let ballY = 200
-let phase: "bowl" | "hit" | "six" = "bowl"
+    canvas.width = 700
+    canvas.height = 300
 
-let animationId: number
+    let ballX = 80
+    let ballY = 200
+    let phase: "bowl" | "hit" | "six" = "bowl"
 
-function drawPlayer(x:number,y:number){
+    let animationId: number
 
-ctx.beginPath()
+    function drawPlayer(x:number,y:number){
 
-// head
-ctx.arc(x,y-40,10,0,Math.PI*2)
+      ctx.beginPath()
 
-// body
-ctx.moveTo(x,y-30)
-ctx.lineTo(x,y)
+      // head
+      ctx.arc(x,y-40,10,0,Math.PI*2)
 
-// legs
-ctx.lineTo(x-10,y+30)
-ctx.moveTo(x,y)
-ctx.lineTo(x+10,y+30)
+      // body
+      ctx.moveTo(x,y-30)
+      ctx.lineTo(x,y)
 
-// arms
-ctx.moveTo(x,y-20)
-ctx.lineTo(x-15,y-5)
-ctx.moveTo(x,y-20)
-ctx.lineTo(x+15,y-5)
+      // legs
+      ctx.lineTo(x-10,y+30)
+      ctx.moveTo(x,y)
+      ctx.lineTo(x+10,y+30)
 
-ctx.strokeStyle="white"
-ctx.lineWidth=2
-ctx.stroke()
+      // arms
+      ctx.moveTo(x,y-20)
+      ctx.lineTo(x-15,y-5)
+      ctx.moveTo(x,y-20)
+      ctx.lineTo(x+15,y-5)
 
-}
+      ctx.strokeStyle="white"
+      ctx.lineWidth=2
+      ctx.stroke()
 
-function draw(){
+    }
 
-ctx.clearRect(0,0,canvas.width,canvas.height)
+    function draw(){
 
-// pitch
-ctx.fillStyle="#1e7f3b"
-ctx.fillRect(0,220,canvas.width,80)
+      ctx.clearRect(0,0,canvas.width,canvas.height)
 
-// bowler
-drawPlayer(80,200)
+      // pitch
+      ctx.fillStyle="#1e7f3b"
+      ctx.fillRect(0,220,canvas.width,80)
 
-// batsman
-drawPlayer(550,200)
+      // bowler
+      drawPlayer(80,200)
 
-// bat
-ctx.beginPath()
-ctx.moveTo(550,170)
-ctx.lineTo(570,140)
-ctx.stroke()
+      // batsman
+      drawPlayer(550,200)
 
-// ball logic
+      // bat
+      ctx.beginPath()
+      ctx.moveTo(550,170)
+      ctx.lineTo(570,140)
+      ctx.stroke()
 
-if(phase==="bowl"){
-ballX +=4
+      // ball logic
 
-if(ballX>520){
-phase="hit"
-}
-}
+      if(phase==="bowl"){
+        ballX +=4
+        if(ballX>520){
+          phase="hit"
+        }
+      }
 
-else if(phase==="hit"){
-ballX +=5
-ballY -=4
+      else if(phase==="hit"){
+        ballX +=5
+        ballY -=4
+        if(ballY<60){
+          phase="six"
+        }
+      }
 
-if(ballY<60){
-phase="six"
-}
-}
+      else if(phase==="six"){
+        ballX +=5
+        ballY +=2
+      }
 
-else if(phase==="six"){
-ballX +=5
-ballY +=2
-}
+      // draw ball
 
-// draw ball
+      ctx.beginPath()
+      ctx.arc(ballX,ballY,5,0,Math.PI*2)
+      ctx.fillStyle="red"
+      ctx.fill()
 
-ctx.beginPath()
-ctx.arc(ballX,ballY,5,0,Math.PI*2)
-ctx.fillStyle="red"
-ctx.fill()
+      animationId = requestAnimationFrame(draw)
 
-animationId = requestAnimationFrame(draw)
+    }
 
-}
+    draw()
 
-draw()
+    return () => cancelAnimationFrame(animationId)
 
-return () => cancelAnimationFrame(animationId)
+  },[])
 
-},[])
+  return (
 
-return (
+    <div className="flex justify-center mt-20">
 
-<div className="flex justify-center mt-20">
+      <canvas
+        ref={canvasRef}
+        className="border border-white/20 rounded-xl"
+      />
 
-<canvas
-ref={canvasRef}
-className="border border-white/20 rounded-xl"
-/>
+    </div>
 
-</div>
-
-)
+  )
 
 }
