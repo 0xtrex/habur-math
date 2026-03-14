@@ -1,20 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import PremiumImage from "@/components/PremiumImage"
 
 export default function GalleryClient({images}:{images:string[]}){
 
 const [selected,setSelected] = useState<number | null>(null)
-
-function next(){
-if(selected===null) return
-setSelected((selected+1)%images.length)
-}
-
-function prev(){
-if(selected===null) return
-setSelected((selected-1+images.length)%images.length)
-}
 
 return(
 
@@ -24,8 +15,6 @@ return(
 Gallery
 </h1>
 
-{/* GRID */}
-
 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 
 {images.map((src,i)=>(
@@ -33,12 +22,12 @@ Gallery
 <div
 key={i}
 onClick={()=>setSelected(i)}
-className="cursor-pointer overflow-hidden rounded-xl border border-white/10 group"
+className="cursor-pointer overflow-hidden rounded-xl border border-white/10 group hover:scale-[1.03] transition duration-500"
 >
 
-<img
+<PremiumImage
 src={src}
-className="w-full h-60 object-cover group-hover:scale-110 transition duration-500"
+className="w-full h-64"
 />
 
 </div>
@@ -47,14 +36,11 @@ className="w-full h-60 object-cover group-hover:scale-110 transition duration-50
 
 </div>
 
-
-{/* LIGHTBOX */}
+{/* FULLSCREEN VIEW */}
 
 {selected !== null && (
 
-<div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
-
-{/* CLOSE */}
+<div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
 
 <button
 onClick={()=>setSelected(null)}
@@ -63,30 +49,10 @@ className="absolute top-8 right-10 text-4xl text-white"
 ✕
 </button>
 
-{/* PREVIOUS */}
-
-<button
-onClick={prev}
-className="absolute left-8 text-4xl text-white"
->
-‹
-</button>
-
-{/* IMAGE */}
-
 <img
 src={images[selected]}
-className="max-h-[90vh] max-w-[90vw] rounded-lg shadow-2xl"
+className="max-h-[90vh] max-w-[90vw] rounded-xl animate-fade"
 />
-
-{/* NEXT */}
-
-<button
-onClick={next}
-className="absolute right-8 text-4xl text-white"
->
-›
-</button>
 
 </div>
 
