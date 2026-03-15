@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import CricketParticleBall from "@/components/CricketParticleBall"
+import JaiShreeRamButton from "@/components/JaiShreeRamButton"
 
 export default function Home(){
 
@@ -78,6 +79,9 @@ Football is also played frequently by the community.
 </section>
 
 <Footer />
+
+{/* Floating JAI SHREE RAM Button */}
+<JaiShreeRamButton />
 
 </main>
 

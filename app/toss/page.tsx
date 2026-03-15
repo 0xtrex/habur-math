@@ -1,32 +1,60 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { motion } from "framer-motion"
 import Navbar from "@/components/Navbar"
 
-export default function TossPage() {
+export default function TossPage(){
 
-const [result,setResult] = useState("")
+const [result,setResult] = useState<"HEADS"|"TAILS"|null>(null)
 const [flipping,setFlipping] = useState(false)
+const [rotation,setRotation] = useState(0)
+
+const audioRef = useRef<HTMLAudioElement | null>(null)
+
+/* toss */
 
 function tossCoin(){
 
 if(flipping) return
 
 setFlipping(true)
-setResult("")
+setResult(null)
+
+/* play coin flip sound */
+
+if(!audioRef.current){
+audioRef.current = new Audio("/toss.mp3")
+}
+
+audioRef.current.currentTime = 0
+audioRef.current.play().catch(()=>{})
+
+const spins = 1800
+
+const random = new Uint32Array(1)
+window.crypto.getRandomValues(random)
+
+const toss = random[0] % 2 === 0 ? "HEADS" : "TAILS"
+
+/* calculate final rotation */
+
+const finalAngle = spins + (toss === "HEADS" ? 0 : 180)
+
+setRotation(finalAngle)
+
+/* reveal result after spin */
 
 setTimeout(()=>{
-
-const array = new Uint32Array(1)
-window.crypto.getRandomValues(array)
-
-const toss = array[0] % 2 === 0 ? "HEADS" : "TAILS"
 
 setResult(toss)
 setFlipping(false)
 
-},2500)
+/* reset stable position */
+
+setRotation(toss === "HEADS" ? 0 : 180)
+
+},2200)
 
 }
 
@@ -40,17 +68,39 @@ return(
 Cricket Toss
 </h1>
 
-{/* Coin */}
+
+{/* COIN */}
 
 <motion.div
-animate={flipping ? { rotateY: 1440 } : { rotateY: 0 }}
-transition={{ duration: 2.5 }}
-className="text-[120px] mb-10"
+animate={{ rotateY: rotation }}
+transition={{ duration:2.2, ease:"easeInOut" }}
+className="w-40 h-40 mb-12 relative"
+style={{ transformStyle:"preserve-3d" }}
 >
-🪙
+
+{/* HEADS */}
+
+<img
+src="/toss/heads.png"
+className="absolute w-full h-full object-contain"
+style={{ backfaceVisibility:"hidden" }}
+/>
+
+{/* TAILS */}
+
+<img
+src="/toss/tails.png"
+className="absolute w-full h-full object-contain"
+style={{
+transform:"rotateY(180deg)",
+backfaceVisibility:"hidden"
+}}
+/>
+
 </motion.div>
 
-{/* Toss Button */}
+
+{/* BUTTON */}
 
 <button
 onClick={tossCoin}
@@ -59,7 +109,8 @@ className="px-10 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 
 TOSS COIN
 </button>
 
-{/* Result */}
+
+{/* RESULT */}
 
 {result && (
 
