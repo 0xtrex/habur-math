@@ -3,7 +3,7 @@
 import PremiumImage from "@/components/PremiumImage"
 
 const players = [
-{ name:"Dipankar", image:"/players/dipankar.jpg" },
+{ name:"Dipankar (LEADER)", image:"/players/dipankar.jpg" },
 { name:"Pritam Chakraborty", image:"/players/pritam-chakraborty.png" },
 { name:"Sunny", image:"/players/sunny.jpg" },
 { name:"Chandan", image:"/players/chandan.png" },
