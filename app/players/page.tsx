@@ -11,7 +11,7 @@ batting:"Right Hand",
 bowling:"Nil",
 power:99.99,
 strength:"Leader",
-best:"102*",
+best:"104*",
 weakness:"Short ball",
 image:"/players/dipankar.jpg"
 },
