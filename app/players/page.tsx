@@ -11,7 +11,7 @@ const players = [
 { name:"Arjun", image:"/players/arjun.jpg" },
 { name:"Choto", image:"/players/choto.jpg" },
 { name:"Debraj", image:"/players/debraj.png" },
-{ name:"Soumya", image:"/players/soumya.jpg" },
+{ name:"Soumya", image:"/players/soumya.png" },
 { name:"Milan", image:"/players/milan.jpg" },
 { name:"Pradipta", image:"/players/pradipta.jpg" },
 { name:"Pritam", image:"/players/pritam.png" },
