@@ -217,7 +217,7 @@ image:"/players/x.jpg"
 name:"Saheb",
 role:"All Rounder",
 batting:"Right Hand",
-bowling:"In Swing",
+bowling:"Right Arm Fast",
 power:87,
 strength:"Snake Sweep",
 best:"76",
