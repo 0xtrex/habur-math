@@ -1,18 +1,31 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useRef } from "react"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import CricketParticleBall from "@/components/CricketParticleBall"
-import JaiShreeRamButton from "@/components/JaiShreeRamButton"
 
 export default function Home(){
+
+const audioRef = useRef<HTMLAudioElement | null>(null)
+
+function playSound(){
+
+if(!audioRef.current){
+audioRef.current = new Audio("/jai-shree-ram.mp3")
+}
+
+audioRef.current.currentTime = 0
+audioRef.current.play().catch(()=>{})
+
+}
 
 return(
 
 <main className="relative min-h-screen text-white overflow-hidden">
 
-{/* Cricket Particle Ball Background */}
+{/* Background */}
 <CricketParticleBall />
 
 <Navbar />
@@ -39,6 +52,7 @@ create unforgettable memories.
 </motion.p>
 
 <motion.button
+onClick={playSound}
 whileHover={{scale:1.1}}
 whileTap={{scale:0.95}}
 className="mt-10 px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 font-semibold shadow-lg shadow-purple-500/30"
@@ -80,11 +94,7 @@ Football is also played frequently by the community.
 
 <Footer />
 
-{/* Floating JAI SHREE RAM Button */}
-<JaiShreeRamButton />
-
 </main>
 
 )
-
 }
