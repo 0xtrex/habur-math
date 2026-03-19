@@ -2,11 +2,27 @@ import { MongoClient } from "mongodb"
 
 const uri = process.env.MONGODB_URI!
 
-const client = new MongoClient(uri)
+if (!uri) {
+  throw new Error("Please add MONGODB_URI to .env.local")
+}
 
-export async function connectDB(){
-  if(!client.topology?.isConnected()){
-    await client.connect()
-  }
+let client: MongoClient
+let clientPromise: Promise<MongoClient>
+
+// @ts-ignore
+if (!global._mongoClientPromise) {
+
+  client = new MongoClient(uri)
+
+  // @ts-ignore
+  global._mongoClientPromise = client.connect()
+
+}
+
+ // @ts-ignore
+clientPromise = global._mongoClientPromise
+
+export async function connectDB() {
+  const client = await clientPromise
   return client.db("haburmath")
 }
