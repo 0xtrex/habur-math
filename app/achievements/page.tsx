@@ -4,11 +4,10 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import Navbar from "@/components/Navbar"
 
-export default function Events(){
+export default function Achievements(){
 
-const [events,setEvents] = useState<any[]>([])
+const [data,setData] = useState<any[]>([])
 const [loading,setLoading] = useState(true)
-
 const [showForm,setShowForm] = useState(false)
 const [editing,setEditing] = useState<any>(null)
 
@@ -22,9 +21,9 @@ const [image,setImage] = useState("")
 
 async function load(){
 setLoading(true)
-const res = await fetch("/api/events")
-const data = await res.json()
-setEvents(data)
+const res = await fetch("/api/achievements")
+const d = await res.json()
+setData(d)
 setLoading(false)
 }
 
@@ -35,14 +34,18 @@ load()
 /* IMAGE */
 
 function handleFile(e:any){
+
 const file = e.target.files[0]
 if(!file) return
 
 const reader = new FileReader()
+
 reader.onloadend = ()=>{
 setImage(reader.result as string)
 }
+
 reader.readAsDataURL(file)
+
 }
 
 /* SAVE */
@@ -56,7 +59,7 @@ return
 
 if(editing){
 
-await fetch("/api/events",{
+await fetch("/api/achievements",{
 method:"PUT",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
@@ -71,7 +74,7 @@ password
 
 }else{
 
-await fetch("/api/events",{
+await fetch("/api/achievements",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
@@ -87,6 +90,7 @@ password
 
 reset()
 load()
+
 }
 
 /* DELETE */
@@ -98,23 +102,24 @@ alert("Enter password")
 return
 }
 
-await fetch("/api/events",{
+await fetch("/api/achievements",{
 method:"DELETE",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({id,password})
 })
 
 load()
+
 }
 
 /* EDIT */
 
-function edit(e:any){
-setEditing(e)
-setTitle(e.title)
-setDate(e.date)
-setDesc(e.description)
-setImage(e.image)
+function edit(a:any){
+setEditing(a)
+setTitle(a.title)
+setDate(a.date)
+setDesc(a.description)
+setImage(a.image)
 setShowForm(true)
 }
 
@@ -129,6 +134,21 @@ setDesc("")
 setImage("")
 }
 
+/* SKELETON LOADER */
+
+function SkeletonCard(){
+return(
+<div className="animate-pulse rounded-2xl overflow-hidden bg-white/5 border border-white/10">
+  <div className="h-60 bg-white/10"></div>
+  <div className="p-6 space-y-3">
+    <div className="h-6 bg-white/10 w-2/3 rounded"></div>
+    <div className="h-4 bg-white/10 w-full rounded"></div>
+    <div className="h-4 bg-white/10 w-1/2 rounded"></div>
+  </div>
+</div>
+)
+}
+
 /* UI */
 
 return(
@@ -137,8 +157,8 @@ return(
 
 <Navbar/>
 
-<h1 className="text-6xl text-center mb-16 font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-Events
+<h1 className="text-6xl text-center mb-16 font-bold bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+Achievements
 </h1>
 
 {/* PASSWORD */}
@@ -153,14 +173,14 @@ className="w-full p-3 rounded bg-black/40"
 />
 </div>
 
-{/* BUTTON */}
+{/* ADD BUTTON */}
 
 <div className="flex justify-center mb-12">
 <button
 onClick={()=>setShowForm(true)}
-className="px-8 py-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 font-semibold hover:scale-105 transition shadow-lg"
+className="px-8 py-4 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 font-semibold hover:scale-105 transition shadow-lg"
 >
-+ Create Event
++ Add Achievement
 </button>
 </div>
 
@@ -197,78 +217,64 @@ className="w-full p-3 rounded bg-black/40"
 
 <input type="file" accept="image/*" onChange={handleFile}/>
 
-{image && <img src={image} className="h-40 rounded"/>}
+{image && <img src={image} className="h-40 rounded object-cover"/>}
 
 <button
 onClick={save}
 className="w-full py-3 rounded bg-gradient-to-r from-green-400 to-blue-500 font-bold"
 >
-{editing ? "Update Event" : "Publish Event"}
+{editing ? "Update" : "Publish"}
 </button>
 
 </motion.div>
 
 )}
 
-{/* LOADING SKELETON */}
-
-{loading && (
+{/* GRID */}
 
 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mt-16">
 
-{Array.from({length:6}).map((_,i)=>(
-
-<div key={i} className="rounded-2xl bg-white/5 border border-white/10 animate-pulse">
-
-<div className="h-60 bg-white/10"></div>
-
-<div className="p-6 space-y-3">
-<div className="h-5 bg-white/10 rounded"></div>
-<div className="h-4 bg-white/10 rounded w-2/3"></div>
-<div className="h-4 bg-white/10 rounded w-1/2"></div>
-</div>
-
-</div>
-
-))}
-
-</div>
-
-)}
-
-{/* EVENTS */}
-
-{!loading && (
-
-<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mt-16">
-
-{events.map((e)=>(
+{loading
+? Array.from({length:6}).map((_,i)=>(<SkeletonCard key={i}/>))
+: data.map((a)=>(
 
 <motion.div
-key={e._id}
+key={a._id}
+initial={{opacity:0,y:40}}
+animate={{opacity:1,y:0}}
+transition={{duration:0.5}}
 whileHover={{scale:1.05}}
 className="rounded-2xl overflow-hidden bg-white/5 backdrop-blur-xl border border-white/10"
 >
 
-<img src={e.image} className="h-60 w-full object-cover"/>
+<img
+src={a.image}
+className="h-60 w-full object-cover"
+/>
 
 <div className="p-6">
 
-<h2 className="text-2xl font-bold">{e.title}</h2>
+<h2 className="text-2xl font-bold">{a.title}</h2>
 
-<p className="text-gray-400 mt-2">{e.description}</p>
+<p className="text-gray-400 mt-2">{a.description}</p>
 
-<p className="text-purple-400 mt-4">
-{new Date(e.date).toDateString()}
+<p className="text-yellow-400 mt-4">
+{new Date(a.date).toDateString()}
 </p>
 
 <div className="flex gap-3 mt-4">
 
-<button onClick={()=>edit(e)} className="px-4 py-2 bg-yellow-500 rounded">
+<button
+onClick={()=>edit(a)}
+className="px-4 py-2 bg-yellow-500 rounded"
+>
 Edit
 </button>
 
-<button onClick={()=>remove(e._id)} className="px-4 py-2 bg-red-500 rounded">
+<button
+onClick={()=>remove(a._id)}
+className="px-4 py-2 bg-red-500 rounded"
+>
 Delete
 </button>
 
@@ -278,12 +284,12 @@ Delete
 
 </motion.div>
 
-))}
+))
+}
 
 </div>
 
-)}
-
 </div>
+
 )
 }

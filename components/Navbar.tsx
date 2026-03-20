@@ -13,6 +13,7 @@ const links = [
 { name:"Home", href:"/" },
 { name:"Players", href:"/players" },
 { name:"Toss", href:"/toss" },
+{ name:"Achievements", href:"/achievements" },
 { name:"Events", href:"/events" },
 { name:"Gallery", href:"/gallery" }
 ]

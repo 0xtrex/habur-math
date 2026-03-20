@@ -1,34 +1,39 @@
-import type { Metadata } from "next";
-import { Space_Grotesk, Outfit } from "next/font/google";
-import "./globals.css";
+import type { Metadata, Viewport } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import "./globals.css"
 
-const spaceGrotesk = Space_Grotesk({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  variable: "--font-space",
-});
+})
 
-const outfit = Outfit({
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
-  variable: "--font-outfit",
-});
+})
 
 export const metadata: Metadata = {
-  title: "HABUR MATH Playground",
-  description: "Community playground for football, friendship and memories.",
-};
+  title: "HABUR MATH",
+  description: "Community Playground"
+}
+
+/* ✅ FIXED (themeColor moved here) */
+export const viewport: Viewport = {
+  themeColor: "#000000"
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en">
       <body
-        className={`${spaceGrotesk.variable} ${outfit.variable} antialiased bg-black text-white`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>
     </html>
-  );
+  )
 }
