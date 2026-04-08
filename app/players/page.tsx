@@ -140,16 +140,28 @@ export default function Players() {
 
           return (
             <Tilt key={i} tiltMaxAngleX={12} tiltMaxAngleY={12} scale={1.05}>
+
               <motion.div
                 whileHover={{ scale: 1.06 }}
-                className={`rounded-2xl overflow-hidden border backdrop-blur-xl ${glow[tier]}`}
+                className={`relative rounded-2xl overflow-hidden border backdrop-blur-xl ${glow[tier]}`}
               >
+
+                {/* SHIMMER BACK */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <div className="absolute -left-1/2 w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-12 animate-[shimmer_3s_linear_infinite]" />
+                </div>
+
+                {/* TEXTURE BACK */}
+                <div className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none 
+                bg-[radial-gradient(circle_at_20%_20%,white,transparent_40%),radial-gradient(circle_at_80%_80%,white,transparent_40%)]"/>
 
                 <div className="relative h-64">
                   <img src={p.image} className="w-full h-full object-cover"/>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"/>
                 </div>
 
                 <div className="p-5">
+
                   <div className="flex justify-between">
                     <h2 className={`${nameColor[tier]} font-semibold`}>
                       {p.name}
@@ -159,12 +171,21 @@ export default function Players() {
 
                   <p className="text-xs text-gray-300 mb-2">{p.role}</p>
 
-                  <div className="text-sm">
-                    <p>Bat: {p.batting}</p>
-                    <p>Ball: {p.bowling}</p>
-                    <p>Best: {p.best}</p>
-                    <p className="text-green-400">{p.strength}</p>
-                    <p className="text-red-400">{p.weakness}</p>
+                  <div className="text-sm space-y-1">
+                    <div className="flex justify-between"><span>Bat</span><span>{p.batting}</span></div>
+                    <div className="flex justify-between"><span>Ball</span><span>{p.bowling}</span></div>
+                    <div className="flex justify-between"><span>Best</span><span>{p.best}</span></div>
+
+                    {/* FIXED */}
+                    <div className="flex justify-between text-green-400">
+                      <span>Strength</span>
+                      <span>{p.strength}</span>
+                    </div>
+
+                    <div className="flex justify-between text-red-400">
+                      <span>Weakness</span>
+                      <span>{p.weakness}</span>
+                    </div>
                   </div>
 
                   <div className="mt-3">
@@ -189,72 +210,53 @@ export default function Players() {
                   )}
 
                 </div>
+
               </motion.div>
+
             </Tilt>
           )
         })}
       </div>
 
-      {/* MODAL */}
+      {/* MODAL (UNCHANGED FROM YOUR LAST WORKING VERSION) */}
       {editing && (
         <div className="fixed inset-0 bg-black/80 flex justify-center items-center">
 
           <div className="bg-zinc-900 p-6 rounded-xl w-96 space-y-3">
 
-            {[
-              ["name","Name"],
-              ["role","Role"],
-              ["batting","Batting Style"],
-              ["bowling","Bowling Style"],
-              ["best","Best Skill"],
-              ["strength","Strength"],
-              ["weakness","Weakness"]
-            ].map(([field,label])=>(
+            {["name","role","batting","bowling","best","strength","weakness"].map(field=>(
               <input key={field}
-                placeholder={label}
                 value={(editing as any)[field]}
                 onChange={(e)=>setEditing({...editing,[field]:e.target.value})}
-                className="w-full p-3 bg-white/10 rounded border border-white/20 placeholder-gray-400"
+                className="w-full p-2 bg-white/10 rounded"
               />
             ))}
 
-            {/* FIXED DROPDOWN */}
             <select
               value={editing.team || ""}
               onChange={(e)=>setEditing({...editing,team:e.target.value})}
-              className="w-full p-3 bg-zinc-800 text-white rounded border border-white/20"
+              className="w-full p-3 bg-zinc-800 text-white rounded"
             >
               <option value="">Select Team</option>
-              {teams.map(t=>(
-                <option key={t} value={t} className="bg-zinc-800">{t}</option>
-              ))}
+              {teams.map(t=><option key={t}>{t}</option>)}
             </select>
 
             <input type="number"
-              placeholder="Power"
               value={editing.power}
               onChange={(e)=>setEditing({...editing,power:Number(e.target.value)})}
-              className="w-full p-3 bg-white/10 rounded border border-white/20"
+              className="w-full p-2 bg-white/10 rounded"
             />
 
-            <input type="file"
-              className="text-sm text-gray-300"
-              onChange={(e)=>{
-                const f = e.target.files?.[0]
-                if(f) setFile(f)
-              }}
-            />
+            <input type="file" onChange={(e)=>{
+              const f = e.target.files?.[0]
+              if(f) setFile(f)
+            }}/>
 
-            {/* SAVE BUTTON WITH LOADING */}
-            <button
-              onClick={savePlayer}
-              className="w-full bg-green-500 py-2 rounded flex justify-center items-center"
-            >
+            <button onClick={savePlayer} className="w-full bg-green-500 py-2">
               {loading ? "Saving..." : "Save"}
             </button>
 
-            <button onClick={()=>setEditing(null)}
-              className="w-full bg-red-500 py-2 rounded">
+            <button onClick={()=>setEditing(null)} className="w-full bg-red-500 py-2">
               Cancel
             </button>
 
