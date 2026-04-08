@@ -11,15 +11,12 @@ let clientPromise: Promise<MongoClient>
 
 // @ts-ignore
 if (!global._mongoClientPromise) {
-
   client = new MongoClient(uri)
-
   // @ts-ignore
   global._mongoClientPromise = client.connect()
-
 }
 
- // @ts-ignore
+// @ts-ignore
 clientPromise = global._mongoClientPromise
 
 export async function connectDB() {

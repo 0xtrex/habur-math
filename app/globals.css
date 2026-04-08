@@ -62,3 +62,7 @@ html {
   background: linear-gradient(#7c3aed, #3b82f6);
   border-radius: 10px;
 }
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(12deg); }
+  100% { transform: translateX(100%) rotate(12deg); }
+}

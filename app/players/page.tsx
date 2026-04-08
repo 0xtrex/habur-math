@@ -2,368 +2,280 @@
 
 import { motion } from "framer-motion"
 import Navbar from "@/components/Navbar"
+import { useEffect, useState } from "react"
+import Tilt from "react-parallax-tilt"
 
-const players = [
-{
-name:"Dipankar",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Nil",
-power:99.99,
-strength:"Leader",
-best:"104*",
-weakness:"Short ball",
-image:"/players/dipankar.jpg"
-},
-{
-name:"Pritam Chakraborty",
-role:"All Rounder",
-batting:"Right Hand",
-bowling:"Medium",
-power:99.98,
-strength:"Switch Hit/Reverse Sweep",
-best:"88",
-weakness:"Chandan",
-image:"/players/pritam-chakraborty.png"
-},
-{
-name:"Sunny",
-role:"All rounder",
-batting:"Right Hand",
-bowling:"Super fast",
-power:10000,
-strength:"Fast Ball",
-best:"310*",
-weakness:"Nothing",
-image:"/players/sunny.jpg"
-},
-{
-name:"Chandan",
-role:"All Rounder",
-batting:"Right Hand",
-bowling:"Right Arm Fast",
-power:90,
-strength:"Consistency",
-best:"87 & 5W",
-weakness:"Pressure",
-image:"/players/chandan.png"
-},
-{
-name:"Keshab",
-role:"All rounder",
-batting:"Right Hand",
-bowling:"Right arm fast",
-power:89,
-strength:"Timing",
-best:"92",
-weakness:"Bouncer",
-image:"/players/keshab.png"
-},
-{
-name:"arjun",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Nil",
-power:65,
-strength:"Big hitting",
-best:"59*",
-weakness:"Leg break",
-image:"/players/arjun.jpg"
-},
-{
-name:"Debraj",
-role:"WK/Batsman",
-batting:"Right Hand",
-bowling:"Right arm slow",
-power:86,
-strength:"Classic Shorts",
-best:"73*",
-weakness:"Dot Ball",
-image:"/players/debraj.png"
-},
-{
-name:"Pritam",
-role:"All Rounder",
-batting:"Right Hand",
-bowling:"Right Arm medium",
-power:85,
-strength:"Power Hitting",
-best:"94",
-weakness:"Cutter",
-image:"/players/pritam.png"
-},
-{
-name:"Sandip",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Nil",
-power:45,
-strength:"Fielding",
-best:"49",
-weakness:"Length Ball",
-image:"/players/sandip.png"
-},
-{
-name:"Shovon",
-role:"All rounder",
-batting:"Right Hand",
-bowling:"Right Arm Under Hand",
-power:79,
-strength:"Ground Touching Ball",
-best:"91*",
-weakness:"Leg Swing",
-image:"/players/shovon.jpg"
-},
-{
-name:"Sujoy",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Nil",
-power:56,
-strength:"Test",
-best:"55",
-weakness:"Length Ball",
-image:"/players/sujoy.png"
-},
-{
-name:"Vicky",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Right Hand",
-power:81,
-strength:"Big hitting",
-best:"90",
-weakness:"Short ball",
-image:"/players/vicky.png"
-},
-{
-name:"Roni",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Right Arm",
-power:40,
-strength:"Garrulous",
-best:"30",
-weakness:"Sayan Mota",
-image:"/players/roni.png"
-},
-{
-name:"Sayan",
-role:"All Rounder",
-batting:"Right Hand",
-bowling:"Right Arm Leg Break",
-power:88,
-strength:"Running Between Wickets",
-best:"89",
-weakness:"Chandan",
-image:"/players/sayan.png"
-},
-{
-name:"Soumya",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Right Arm Throw",
-power:40,
-strength:"Full Toss Ball",
-best:"31",
-weakness:"Every Ball",
-image:"/players/soumya.png"
-},
-{
-name:"Pradipta",
-role:"All Rounder",
-batting:"Right Hand",
-bowling:"Hyper Extended Right Arm Fast",
-power:95,
-strength:"Late Cut/Eye Sight",
-best:"85*",
-weakness:"Chandan",
-image:"/players/pradipta.jpg"
-},
-{
-name:"Choto",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Nil",
-power:65,
-strength:"Survival",
-best:"58*",
-weakness:"Sayan Mota",
-image:"/players/x.jpg"
-},
-{
-name:"Milan",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Nil",
-power:60,
-strength:"Hitting",
-best:"45*",
-weakness:"Weight",
-image:"/players/x.jpg"
-},
-{
-name:"Rupam",
-role:"All Rounder",
-batting:"Right Hand",
-bowling:"Right Arm Cutter/Air Swing",
-power:80,
-strength:"Big hitting+Air Swing",
-best:"83*",
-weakness:"Short Ball",
-image:"/players/x.jpg"
-},
-{
-name:"Saheb",
-role:"All Rounder",
-batting:"Right Hand",
-bowling:"Right Arm Fast",
-power:87,
-strength:"Snake Sweep",
-best:"76",
-weakness:"Dot Ball",
-image:"/players/saheb.jpg"
-},
-{
-name:"Aniket",
-role:"Batsman",
-batting:"Right Hand",
-bowling:"Right Arm",
-power:50,
-strength:"Same short",
-best:"69",
-weakness:"Run Out",
-image:"/players/x.jpg"
+interface Player {
+  _id?: string
+  name: string
+  role: string
+  batting: string
+  bowling: string
+  power: number
+  strength: string
+  best: string
+  weakness: string
+  team?: string
+  image: string
 }
 
+const teams = ["RR","PBKS","RCB","DC","SRH","LSG","MI","KKR","GT","CSK"]
 
-]
+export default function Players() {
 
-export default function Players(){
+  const [players, setPlayers] = useState<Player[]>([])
+  const [admin, setAdmin] = useState(false)
+  const [password, setPassword] = useState("")
+  const [editing, setEditing] = useState<Player | null>(null)
+  const [file, setFile] = useState<File | null>(null)
 
-return(
+  useEffect(() => {
+    fetchPlayers()
+  }, [])
 
-<div className="min-h-screen text-white px-6 md:px-16 py-28">
+  const fetchPlayers = async () => {
+    const res = await fetch("/api/players")
+    const data = await res.json()
+    setPlayers(data)
+  }
 
-<Navbar/>
+  const getTier = (power:number) => {
+    if (power >= 95) return "Diamond"
+    if (power >= 85) return "Gold"
+    if (power >= 70) return "Silver"
+    if (power >= 50) return "Copper"
+    return "Iron"
+  }
 
-<h1 className="text-5xl font-bold text-center mb-16 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-Players
-</h1>
+  const glow:any = {
+    Diamond: "shadow-[0_0_50px_rgba(0,200,255,0.7)]",
+    Gold: "shadow-[0_0_50px_rgba(255,215,0,0.7)]",
+    Silver: "shadow-[0_0_40px_rgba(200,200,200,0.6)]",
+    Copper: "shadow-[0_0_40px_rgba(255,120,50,0.6)]",
+    Iron: "shadow-[0_0_30px_rgba(120,120,120,0.6)]"
+  }
 
+  const nameColor:any = {
+    Diamond: "bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent",
+    Gold: "bg-gradient-to-r from-yellow-300 to-yellow-500 bg-clip-text text-transparent",
+    Silver: "bg-gradient-to-r from-gray-200 to-gray-400 bg-clip-text text-transparent",
+    Copper: "bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent",
+    Iron: "text-gray-400"
+  }
 
-{/* GRID */}
+  const barColor:any = {
+    Diamond: "from-cyan-300 to-blue-500",
+    Gold: "from-yellow-300 to-yellow-600",
+    Silver: "from-gray-200 to-gray-500",
+    Copper: "from-orange-400 to-orange-700",
+    Iron: "from-gray-500 to-gray-800"
+  }
 
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+  const savePlayer = async () => {
+    if (!editing) return
 
+    let image = editing.image
 
-{players.map((p,i)=>(
+    if (file) {
+      const form = new FormData()
+      form.append("file", file)
 
-<motion.div
-key={i}
-whileHover={{scale:1.05}}
-className="
-relative
-rounded-2xl
-overflow-hidden
-bg-white/5
-backdrop-blur-xl
-border border-white/10
-shadow-xl
-group
-"
->
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: form
+      })
 
-{/* IMAGE */}
+      const data = await res.json()
+      image = data.url
+    }
 
-<div className="relative h-64 overflow-hidden">
+    const method = editing._id ? "PUT" : "POST"
 
-<img
-src={p.image}
-className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-/>
+    await fetch("/api/players", {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...editing, image })
+    })
 
-{/* GRADIENT OVERLAY */}
+    setEditing(null)
+    setFile(null)
+    fetchPlayers()
+  }
 
-<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+  return (
+    <div className="min-h-screen text-white px-6 md:px-16 py-24">
 
-</div>
+      <Navbar />
 
+      <h1 className="text-5xl font-semibold text-center mb-12 tracking-tight bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+        Players
+      </h1>
 
-{/* INFO */}
+      <div className="flex justify-center mb-8 gap-3">
+        <input
+          type="password"
+          placeholder="Admin password"
+          className="px-4 py-2 bg-white/10 rounded-lg"
+          onChange={(e)=>setPassword(e.target.value)}
+        />
+        <button
+          onClick={()=>password==="rexunity" && setAdmin(true)}
+          className="px-4 py-2 bg-purple-500 rounded-lg"
+        >
+          Admin
+        </button>
+      </div>
 
-<div className="p-6">
+      {admin && (
+        <div className="text-center mb-10">
+          <button
+            onClick={()=>setEditing({
+              name:"",role:"",batting:"",bowling:"",
+              power:50,strength:"",best:"",weakness:"",team:"",image:""
+            })}
+            className="px-6 py-3 bg-green-500 rounded-xl"
+          >
+            + Add Player
+          </button>
+        </div>
+      )}
 
-<h2 className="text-xl font-bold">
-{p.name}
-</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
 
-<p className="text-sm text-gray-400 mb-4">
-{p.role}
-</p>
+        {players.map((p,i)=>{
 
+          const tier = getTier(p.power)
 
-{/* STATS */}
+          return (
+            <Tilt key={i} tiltMaxAngleX={12} tiltMaxAngleY={12} scale={1.03} glareEnable glareMaxOpacity={0.25}>
 
-<div className="space-y-2 text-sm">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className={`relative rounded-2xl overflow-hidden backdrop-blur-xl border ${glow[tier]}`}
+              >
 
-<div className="flex justify-between">
-<span>Batting</span>
-<span>{p.batting}</span>
-</div>
+                {/* SHIMMER */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <div className="absolute -left-1/2 w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-12 animate-[shimmer_3s_linear_infinite]" />
+                </div>
 
-<div className="flex justify-between">
-<span>Bowling</span>
-<span>{p.bowling}</span>
-</div>
+                {/* TEXTURE */}
+                <div className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none 
+                bg-[radial-gradient(circle_at_20%_20%,white,transparent_40%),radial-gradient(circle_at_80%_80%,white,transparent_40%)]"/>
 
-<div className="flex justify-between">
-<span>Best</span>
-<span>{p.best}</span>
-</div>
+                {/* IMAGE */}
+                <div className="relative h-64">
+                  <img src={p.image} className="w-full h-full object-cover"/>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"/>
+                </div>
 
-<div className="flex justify-between">
-<span>Strength</span>
-<span className="text-green-400">{p.strength}</span>
-</div>
+                {/* CONTENT */}
+                <div className="p-5 relative z-10">
 
-<div className="flex justify-between">
-<span>Weakness</span>
-<span className="text-red-400">{p.weakness}</span>
-</div>
+                  <div className="flex justify-between items-center mb-2">
 
-</div>
+                    <h2 className={`text-lg font-semibold ${nameColor[tier]}`}>
+                      {p.name}
+                    </h2>
 
+                    {p.team && (
+                      <img src={`/${p.team.toLowerCase()}.png`} className="h-7 w-7"/>
+                    )}
 
-{/* POWER BAR */}
+                  </div>
 
-<div className="mt-5">
+                  <p className="text-xs text-gray-300 mb-3">{p.role}</p>
 
-<div className="flex justify-between text-xs mb-1">
-<span>Power</span>
-<span>{p.power}</span>
-</div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between"><span>Bat</span><span>{p.batting}</span></div>
+                    <div className="flex justify-between"><span>Ball</span><span>{p.bowling}</span></div>
+                    <div className="flex justify-between"><span>Best</span><span>{p.best}</span></div>
+                    <div className="flex justify-between text-green-400"><span>Strength</span><span>{p.strength}</span></div>
+                    <div className="flex justify-between text-red-400"><span>Weakness</span><span>{p.weakness}</span></div>
+                  </div>
 
-<div className="w-full h-2 bg-white/10 rounded-full">
+                  <div className="mt-4">
+                    <div className="flex justify-between text-xs">
+                      <span>Power</span>
+                      <span>{p.power}</span>
+                    </div>
 
-<div
-className="h-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"
-style={{width:`${p.power}%`}}
-/>
+                    <div className="h-2 bg-white/10 rounded mt-1">
+                      <div
+                        className={`h-2 bg-gradient-to-r ${barColor[tier]} rounded`}
+                        style={{width:`${p.power}%`}}
+                      />
+                    </div>
+                  </div>
 
-</div>
+                  {admin && (
+                    <div className="flex gap-2 mt-4">
+                      <button onClick={()=>setEditing(p)} className="flex-1 bg-white/10 py-1 rounded">Edit</button>
+                      <button onClick={async ()=>{
+                        await fetch("/api/players",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:p._id})})
+                        fetchPlayers()
+                      }} className="flex-1 bg-red-500 py-1 rounded">Delete</button>
+                    </div>
+                  )}
 
-</div>
+                </div>
 
-</div>
+              </motion.div>
 
-</motion.div>
+            </Tilt>
+          )
+        })}
 
-))}
+      </div>
 
-</div>
+      {/* MODAL */}
+      {editing && (
+        <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50">
 
-</div>
+          <div className="bg-zinc-900 p-6 rounded-xl w-96 space-y-3">
 
-)
+            {["name","role","batting","bowling","best","strength","weakness"].map(field=>(
+              <input key={field}
+                value={(editing as any)[field]}
+                onChange={(e)=>setEditing({...editing,[field]:e.target.value})}
+                className="w-full p-2 bg-white/10 rounded"
+                placeholder={field}
+              />
+            ))}
+
+            <div className="relative">
+              <select
+                value={editing.team || ""}
+                onChange={(e)=>setEditing({...editing,team:e.target.value})}
+                className="w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white appearance-none"
+              >
+                <option value="" className="bg-black">Select Team</option>
+                {teams.map(t=>(
+                  <option key={t} value={t} className="bg-black">{t}</option>
+                ))}
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▼</div>
+            </div>
+
+            <input type="number"
+              value={editing.power}
+              onChange={(e)=>setEditing({...editing,power:Number(e.target.value)})}
+              className="w-full p-2 bg-white/10 rounded"
+            />
+
+            <input type="file" onChange={(e)=>{
+              const f = e.target.files?.[0]
+              if(f) setFile(f)
+            }}/>
+
+            <button onClick={savePlayer} className="w-full bg-green-500 py-2 rounded">Save</button>
+            <button onClick={()=>setEditing(null)} className="w-full bg-red-500 py-2 rounded">Cancel</button>
+
+          </div>
+
+        </div>
+      )}
+
+    </div>
+  )
 }
