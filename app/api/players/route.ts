@@ -27,17 +27,12 @@ export async function PUT(req: Request) {
   const db = await connectDB()
   const body = await req.json()
 
-  if (!body._id) {
-    return NextResponse.json({ error: "Missing ID" }, { status: 400 })
-  }
-
   const id = new ObjectId(body._id)
-
-  const { _id, ...updateData } = body
+  const { _id, ...data } = body
 
   await db.collection("players").updateOne(
     { _id: id },
-    { $set: updateData }
+    { $set: data }
   )
 
   return NextResponse.json({ success: true })

@@ -47,14 +47,6 @@ export default function Players() {
     return "Iron"
   }
 
-  const glow:any = {
-    Diamond: "shadow-[0_0_50px_rgba(0,200,255,0.7)]",
-    Gold: "shadow-[0_0_50px_rgba(255,215,0,0.7)]",
-    Silver: "shadow-[0_0_40px_rgba(200,200,200,0.6)]",
-    Copper: "shadow-[0_0_40px_rgba(255,120,50,0.6)]",
-    Iron: "shadow-[0_0_30px_rgba(120,120,120,0.6)]"
-  }
-
   const nameColor:any = {
     Diamond: "bg-gradient-to-r from-cyan-300 to-blue-400 bg-clip-text text-transparent",
     Gold: "bg-gradient-to-r from-yellow-300 to-yellow-500 bg-clip-text text-transparent",
@@ -71,23 +63,27 @@ export default function Players() {
     Iron: "from-gray-500 to-gray-800"
   }
 
+  const glow:any = {
+    Diamond: "shadow-[0_0_60px_rgba(0,200,255,0.8)]",
+    Gold: "shadow-[0_0_60px_rgba(255,215,0,0.8)]",
+    Silver: "shadow-[0_0_50px_rgba(200,200,200,0.7)]",
+    Copper: "shadow-[0_0_50px_rgba(255,120,50,0.7)]",
+    Iron: "shadow-[0_0_40px_rgba(120,120,120,0.7)]"
+  }
+
+  const toBase64 = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = error => reject(error)
+    })
+
   const savePlayer = async () => {
     if (!editing) return
 
     let image = editing.image
-
-    if (file) {
-      const form = new FormData()
-      form.append("file", file)
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: form
-      })
-
-      const data = await res.json()
-      image = data.url
-    }
+    if (file) image = await toBase64(file)
 
     const method = editing._id ? "PUT" : "POST"
 
@@ -103,24 +99,25 @@ export default function Players() {
   }
 
   return (
-    <div className="min-h-screen text-white px-6 md:px-16 py-24">
+    <div className="min-h-screen text-white px-6 md:px-16 py-24 font-[SF_Pro_Display,system-ui]">
 
       <Navbar />
 
-      <h1 className="text-5xl font-semibold text-center mb-12 tracking-tight bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+      {/* TITLE */}
+      <h1 className="text-5xl font-semibold text-center mb-14 tracking-tight bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
         Players
       </h1>
 
+      {/* ADMIN */}
       <div className="flex justify-center mb-8 gap-3">
-        <input
-          type="password"
+        <input type="password"
           placeholder="Admin password"
-          className="px-4 py-2 bg-white/10 rounded-lg"
+          className="px-4 py-2 bg-white/10 rounded-lg backdrop-blur-md border border-white/20"
           onChange={(e)=>setPassword(e.target.value)}
         />
         <button
           onClick={()=>password==="rexunity" && setAdmin(true)}
-          className="px-4 py-2 bg-purple-500 rounded-lg"
+          className="px-4 py-2 bg-purple-500 rounded-lg hover:bg-purple-600 transition"
         >
           Admin
         </button>
@@ -133,28 +130,29 @@ export default function Players() {
               name:"",role:"",batting:"",bowling:"",
               power:50,strength:"",best:"",weakness:"",team:"",image:""
             })}
-            className="px-6 py-3 bg-green-500 rounded-xl"
+            className="px-6 py-3 bg-green-500 rounded-xl hover:bg-green-600 transition"
           >
             + Add Player
           </button>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+      {/* GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12">
 
         {players.map((p,i)=>{
 
           const tier = getTier(p.power)
 
           return (
-            <Tilt key={i} tiltMaxAngleX={12} tiltMaxAngleY={12} scale={1.03} glareEnable glareMaxOpacity={0.25}>
+            <Tilt key={i} tiltMaxAngleX={12} tiltMaxAngleY={12} scale={1.05}>
 
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                className={`relative rounded-2xl overflow-hidden backdrop-blur-xl border ${glow[tier]}`}
+                whileHover={{ scale: 1.06 }}
+                className={`relative rounded-2xl overflow-hidden border backdrop-blur-xl ${glow[tier]}`}
               >
 
-                {/* SHIMMER */}
+                {/* ✨ SHIMMER */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                   <div className="absolute -left-1/2 w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-12 animate-[shimmer_3s_linear_infinite]" />
                 </div>
@@ -170,23 +168,21 @@ export default function Players() {
                 </div>
 
                 {/* CONTENT */}
-                <div className="p-5 relative z-10">
+                <div className="p-6">
 
                   <div className="flex justify-between items-center mb-2">
-
-                    <h2 className={`text-lg font-semibold ${nameColor[tier]}`}>
+                    <h2 className={`text-lg font-semibold tracking-wide ${nameColor[tier]}`}>
                       {p.name}
                     </h2>
 
                     {p.team && (
                       <img src={`/${p.team.toLowerCase()}.png`} className="h-7 w-7"/>
                     )}
-
                   </div>
 
-                  <p className="text-xs text-gray-300 mb-3">{p.role}</p>
+                  <p className="text-xs text-gray-400 mb-3 tracking-wide">{p.role}</p>
 
-                  <div className="space-y-1 text-sm">
+                  <div className="space-y-1 text-sm text-gray-200">
                     <div className="flex justify-between"><span>Bat</span><span>{p.batting}</span></div>
                     <div className="flex justify-between"><span>Ball</span><span>{p.bowling}</span></div>
                     <div className="flex justify-between"><span>Best</span><span>{p.best}</span></div>
@@ -194,8 +190,9 @@ export default function Players() {
                     <div className="flex justify-between text-red-400"><span>Weakness</span><span>{p.weakness}</span></div>
                   </div>
 
+                  {/* POWER */}
                   <div className="mt-4">
-                    <div className="flex justify-between text-xs">
+                    <div className="flex justify-between text-xs text-gray-400">
                       <span>Power</span>
                       <span>{p.power}</span>
                     </div>
@@ -208,13 +205,14 @@ export default function Players() {
                     </div>
                   </div>
 
+                  {/* ADMIN */}
                   {admin && (
                     <div className="flex gap-2 mt-4">
-                      <button onClick={()=>setEditing(p)} className="flex-1 bg-white/10 py-1 rounded">Edit</button>
+                      <button onClick={()=>setEditing(p)} className="flex-1 bg-white/10 py-1 rounded hover:bg-white/20">Edit</button>
                       <button onClick={async ()=>{
                         await fetch("/api/players",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:p._id})})
                         fetchPlayers()
-                      }} className="flex-1 bg-red-500 py-1 rounded">Delete</button>
+                      }} className="flex-1 bg-red-500 py-1 rounded hover:bg-red-600">Delete</button>
                     </div>
                   )}
 
@@ -239,23 +237,19 @@ export default function Players() {
                 value={(editing as any)[field]}
                 onChange={(e)=>setEditing({...editing,[field]:e.target.value})}
                 className="w-full p-2 bg-white/10 rounded"
-                placeholder={field}
               />
             ))}
 
-            <div className="relative">
-              <select
-                value={editing.team || ""}
-                onChange={(e)=>setEditing({...editing,team:e.target.value})}
-                className="w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white appearance-none"
-              >
-                <option value="" className="bg-black">Select Team</option>
-                {teams.map(t=>(
-                  <option key={t} value={t} className="bg-black">{t}</option>
-                ))}
-              </select>
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▼</div>
-            </div>
+            <select
+              value={editing.team || ""}
+              onChange={(e)=>setEditing({...editing,team:e.target.value})}
+              className="w-full p-3 bg-white/10 rounded"
+            >
+              <option value="">Select Team</option>
+              {teams.map(t=>(
+                <option key={t}>{t}</option>
+              ))}
+            </select>
 
             <input type="number"
               value={editing.power}
