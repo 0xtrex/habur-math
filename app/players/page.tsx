@@ -30,12 +30,19 @@ export default function Players() {
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => { fetchPlayers() }, [])
+  // ✅ NEW LOADING STATE
+  const [loadingPage, setLoadingPage] = useState(true)
+
+  useEffect(() => {
+    fetchPlayers()
+  }, [])
 
   const fetchPlayers = async () => {
+    setLoadingPage(true)
     const res = await fetch("/api/players")
     const data = await res.json()
     setPlayers(data)
+    setLoadingPage(false)
   }
 
   const getTier = (power:number) => {
@@ -108,7 +115,6 @@ export default function Players() {
         Players
       </h1>
 
-      {/* ADMIN */}
       <div className="flex justify-center mb-8 gap-3">
         <input type="password" placeholder="Admin password"
           className="px-4 py-2 bg-white/10 rounded-lg border border-white/20"
@@ -135,90 +141,107 @@ export default function Players() {
       {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
 
-        {players.map((p,i)=>{
-          const tier = getTier(p.power)
+        {loadingPage ? (
 
-          return (
-            <Tilt key={i} tiltMaxAngleX={12} tiltMaxAngleY={12} scale={1.05}>
+          [...Array(8)].map((_,i)=>(
+            <div key={i} className="rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl">
 
-              <motion.div
-                whileHover={{ scale: 1.06 }}
-                className={`relative rounded-2xl overflow-hidden border backdrop-blur-xl ${glow[tier]}`}
-              >
+              <div className="h-64 bg-white/10 relative overflow-hidden">
+                <div className="absolute inset-0 animate-[shimmer_2s_linear_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"/>
+              </div>
 
-                {/* SHIMMER BACK */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  <div className="absolute -left-1/2 w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-12 animate-[shimmer_3s_linear_infinite]" />
-                </div>
+              <div className="p-5 space-y-3">
+                <div className="h-4 w-2/3 bg-white/10 rounded"/>
+                <div className="h-3 w-1/3 bg-white/10 rounded"/>
+                <div className="h-3 w-full bg-white/10 rounded"/>
+                <div className="h-3 w-full bg-white/10 rounded"/>
+                <div className="h-3 w-3/4 bg-white/10 rounded"/>
+              </div>
 
-                {/* TEXTURE BACK */}
-                <div className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none 
-                bg-[radial-gradient(circle_at_20%_20%,white,transparent_40%),radial-gradient(circle_at_80%_80%,white,transparent_40%)]"/>
+            </div>
+          ))
 
-                <div className="relative h-64">
-                  <img src={p.image} className="w-full h-full object-cover"/>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"/>
-                </div>
+        ) : (
 
-                <div className="p-5">
+          players.map((p,i)=>{
+            const tier = getTier(p.power)
 
-                  <div className="flex justify-between">
-                    <h2 className={`${nameColor[tier]} font-semibold`}>
-                      {p.name}
-                    </h2>
-                    {p.team && <img src={`/${p.team.toLowerCase()}.png`} className="h-6"/>}
+            return (
+              <Tilt key={i} tiltMaxAngleX={12} tiltMaxAngleY={12} scale={1.05}>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  whileHover={{ scale: 1.06 }}
+                  className={`relative rounded-2xl overflow-hidden border backdrop-blur-xl ${glow[tier]}`}
+                >
+
+                  {/* SHIMMER */}
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute -left-1/2 w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-12 animate-[shimmer_3s_linear_infinite]" />
                   </div>
 
-                  <p className="text-xs text-gray-300 mb-2">{p.role}</p>
+                  {/* TEXTURE */}
+                  <div className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none 
+                  bg-[radial-gradient(circle_at_20%_20%,white,transparent_40%),radial-gradient(circle_at_80%_80%,white,transparent_40%)]"/>
 
-                  <div className="text-sm space-y-1">
-                    <div className="flex justify-between"><span>Bat</span><span>{p.batting}</span></div>
-                    <div className="flex justify-between"><span>Ball</span><span>{p.bowling}</span></div>
-                    <div className="flex justify-between"><span>Best</span><span>{p.best}</span></div>
-
-                    {/* FIXED */}
-                    <div className="flex justify-between text-green-400">
-                      <span>Strength</span>
-                      <span>{p.strength}</span>
-                    </div>
-
-                    <div className="flex justify-between text-red-400">
-                      <span>Weakness</span>
-                      <span>{p.weakness}</span>
-                    </div>
+                  <div className="relative h-64">
+                    <img src={p.image} className="w-full h-full object-cover"/>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"/>
                   </div>
 
-                  <div className="mt-3">
-                    <div className="flex justify-between text-xs">
-                      <span>Power</span>
-                      <span>{p.power}</span>
+                  <div className="p-5">
+
+                    <div className="flex justify-between">
+                      <h2 className={`${nameColor[tier]} font-semibold`}>
+                        {p.name}
+                      </h2>
+                      {p.team && <img src={`/${p.team.toLowerCase()}.png`} className="h-6"/>}
                     </div>
-                    <div className="h-2 bg-white/10 rounded">
-                      <div className={`h-2 bg-gradient-to-r ${barColor[tier]} rounded`}
-                        style={{width:`${p.power}%`}}/>
+
+                    <p className="text-xs text-gray-300 mb-2">{p.role}</p>
+
+                    <div className="text-sm space-y-1">
+                      <div className="flex justify-between"><span>Bat</span><span>{p.batting}</span></div>
+                      <div className="flex justify-between"><span>Ball</span><span>{p.bowling}</span></div>
+                      <div className="flex justify-between"><span>Best</span><span>{p.best}</span></div>
+
+                      <div className="flex justify-between text-green-400">
+                        <span>Strength</span>
+                        <span>{p.strength}</span>
+                      </div>
+
+                      <div className="flex justify-between text-red-400">
+                        <span>Weakness</span>
+                        <span>{p.weakness}</span>
+                      </div>
                     </div>
+
+                    <div className="mt-3">
+                      <div className="flex justify-between text-xs">
+                        <span>Power</span>
+                        <span>{p.power}</span>
+                      </div>
+                      <div className="h-2 bg-white/10 rounded">
+                        <div className={`h-2 bg-gradient-to-r ${barColor[tier]} rounded`}
+                          style={{width:`${p.power}%`}}/>
+                      </div>
+                    </div>
+
                   </div>
 
-                  {admin && (
-                    <div className="flex gap-2 mt-3">
-                      <button onClick={()=>setEditing(p)} className="flex-1 bg-white/10 py-1">Edit</button>
-                      <button onClick={async ()=>{
-                        await fetch("/api/players",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:p._id})})
-                        fetchPlayers()
-                      }} className="flex-1 bg-red-500 py-1">Delete</button>
-                    </div>
-                  )}
+                </motion.div>
 
-                </div>
+              </Tilt>
+            )
+          })
 
-              </motion.div>
+        )}
 
-            </Tilt>
-          )
-        })}
       </div>
 
-      {/* MODAL (UNCHANGED FROM YOUR LAST WORKING VERSION) */}
+      {/* MODAL stays SAME */}
       {editing && (
         <div className="fixed inset-0 bg-black/80 flex justify-center items-center">
 
