@@ -29,13 +29,9 @@ export default function Players() {
   const [editing, setEditing] = useState<Player | null>(null)
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
-
-  // ✅ NEW LOADING STATE
   const [loadingPage, setLoadingPage] = useState(true)
 
-  useEffect(() => {
-    fetchPlayers()
-  }, [])
+  useEffect(() => { fetchPlayers() }, [])
 
   const fetchPlayers = async () => {
     setLoadingPage(true)
@@ -115,8 +111,10 @@ export default function Players() {
         Players
       </h1>
 
+      {/* ADMIN */}
       <div className="flex justify-center mb-8 gap-3">
-        <input type="password" placeholder="Admin password"
+        <input type="password"
+          placeholder="Admin password"
           className="px-4 py-2 bg-white/10 rounded-lg border border-white/20"
           onChange={(e)=>setPassword(e.target.value)}
         />
@@ -144,7 +142,7 @@ export default function Players() {
         {loadingPage ? (
 
           [...Array(8)].map((_,i)=>(
-            <div key={i} className="rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl">
+            <div key={i} className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
 
               <div className="h-64 bg-white/10 relative overflow-hidden">
                 <div className="absolute inset-0 animate-[shimmer_2s_linear_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent"/>
@@ -154,8 +152,6 @@ export default function Players() {
                 <div className="h-4 w-2/3 bg-white/10 rounded"/>
                 <div className="h-3 w-1/3 bg-white/10 rounded"/>
                 <div className="h-3 w-full bg-white/10 rounded"/>
-                <div className="h-3 w-full bg-white/10 rounded"/>
-                <div className="h-3 w-3/4 bg-white/10 rounded"/>
               </div>
 
             </div>
@@ -170,14 +166,11 @@ export default function Players() {
               <Tilt key={i} tiltMaxAngleX={12} tiltMaxAngleY={12} scale={1.05}>
 
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
                   whileHover={{ scale: 1.06 }}
                   className={`relative rounded-2xl overflow-hidden border backdrop-blur-xl ${glow[tier]}`}
                 >
 
-                  {/* SHIMMER */}
+                  {/* SHINE */}
                   <div className="absolute inset-0 overflow-hidden pointer-events-none">
                     <div className="absolute -left-1/2 w-[200%] h-full bg-gradient-to-r from-transparent via-white/20 to-transparent rotate-12 animate-[shimmer_3s_linear_infinite]" />
                   </div>
@@ -188,7 +181,6 @@ export default function Players() {
 
                   <div className="relative h-64">
                     <img src={p.image} className="w-full h-full object-cover"/>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"/>
                   </div>
 
                   <div className="p-5">
@@ -208,26 +200,33 @@ export default function Players() {
                       <div className="flex justify-between"><span>Best</span><span>{p.best}</span></div>
 
                       <div className="flex justify-between text-green-400">
-                        <span>Strength</span>
-                        <span>{p.strength}</span>
+                        <span>Strength</span><span>{p.strength}</span>
                       </div>
 
                       <div className="flex justify-between text-red-400">
-                        <span>Weakness</span>
-                        <span>{p.weakness}</span>
+                        <span>Weakness</span><span>{p.weakness}</span>
                       </div>
                     </div>
 
                     <div className="mt-3">
                       <div className="flex justify-between text-xs">
-                        <span>Power</span>
-                        <span>{p.power}</span>
+                        <span>Power</span><span>{p.power}</span>
                       </div>
                       <div className="h-2 bg-white/10 rounded">
                         <div className={`h-2 bg-gradient-to-r ${barColor[tier]} rounded`}
                           style={{width:`${p.power}%`}}/>
                       </div>
                     </div>
+
+                    {admin && (
+                      <div className="flex gap-2 mt-3">
+                        <button onClick={()=>setEditing(p)} className="flex-1 bg-white/10 py-1">Edit</button>
+                        <button onClick={async ()=>{
+                          await fetch("/api/players",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:p._id})})
+                          fetchPlayers()
+                        }} className="flex-1 bg-red-500 py-1">Delete</button>
+                      </div>
+                    )}
 
                   </div>
 
@@ -241,19 +240,20 @@ export default function Players() {
 
       </div>
 
-      {/* MODAL stays SAME */}
+      {/* MODAL */}
       {editing && (
         <div className="fixed inset-0 bg-black/80 flex justify-center items-center">
 
           <div className="bg-zinc-900 p-6 rounded-xl w-96 space-y-3">
 
-            {["name","role","batting","bowling","best","strength","weakness"].map(field=>(
-              <input key={field}
-                value={(editing as any)[field]}
-                onChange={(e)=>setEditing({...editing,[field]:e.target.value})}
-                className="w-full p-2 bg-white/10 rounded"
-              />
-            ))}
+            {/* PLACEHOLDERS FIXED */}
+            <input placeholder="Name" value={editing.name} onChange={(e)=>setEditing({...editing,name:e.target.value})} className="w-full p-2 bg-white/10 rounded"/>
+            <input placeholder="Role" value={editing.role} onChange={(e)=>setEditing({...editing,role:e.target.value})} className="w-full p-2 bg-white/10 rounded"/>
+            <input placeholder="Batting" value={editing.batting} onChange={(e)=>setEditing({...editing,batting:e.target.value})} className="w-full p-2 bg-white/10 rounded"/>
+            <input placeholder="Bowling" value={editing.bowling} onChange={(e)=>setEditing({...editing,bowling:e.target.value})} className="w-full p-2 bg-white/10 rounded"/>
+            <input placeholder="Best Skill" value={editing.best} onChange={(e)=>setEditing({...editing,best:e.target.value})} className="w-full p-2 bg-white/10 rounded"/>
+            <input placeholder="Strength" value={editing.strength} onChange={(e)=>setEditing({...editing,strength:e.target.value})} className="w-full p-2 bg-white/10 rounded"/>
+            <input placeholder="Weakness" value={editing.weakness} onChange={(e)=>setEditing({...editing,weakness:e.target.value})} className="w-full p-2 bg-white/10 rounded"/>
 
             <select
               value={editing.team || ""}
@@ -265,6 +265,7 @@ export default function Players() {
             </select>
 
             <input type="number"
+              placeholder="Power"
               value={editing.power}
               onChange={(e)=>setEditing({...editing,power:Number(e.target.value)})}
               className="w-full p-2 bg-white/10 rounded"

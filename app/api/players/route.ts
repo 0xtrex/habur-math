@@ -6,7 +6,13 @@ import { NextResponse } from "next/server"
 export async function GET() {
   const db = await connectDB()
   const players = await db.collection("players").find().toArray()
-  return NextResponse.json(players)
+
+  const formatted = players.map(p => ({
+    ...p,
+    _id: p._id.toString()
+  }))
+
+  return NextResponse.json(formatted)
 }
 
 // ADD
