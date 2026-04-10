@@ -14,12 +14,14 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "HABUR MATH",
-  description: "Community Playground"
+  description: "Community Playground",
+  icons: {
+    icon: "/habu-favicon.png", // 👈 your favicon here
+  },
 }
 
-/* ✅ FIXED (themeColor moved here) */
 export const viewport: Viewport = {
-  themeColor: "#000000"
+  themeColor: "#000000",
 }
 
 export default function RootLayout({
